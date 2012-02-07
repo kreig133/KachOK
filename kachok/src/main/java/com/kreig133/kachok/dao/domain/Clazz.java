@@ -1,10 +1,7 @@
 package com.kreig133.kachok.dao.domain;
 
-import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.kreig133.kachok.dao.domain.Sportsman;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -14,6 +11,7 @@ import java.util.Date;
  * @version 1.0
  */
 @DatabaseTable
+@SuppressWarnings( "UnusedDeclaration" )
 public class Clazz implements Serializable{
 
     private static final long serialVersionUID = - 2829671578413052604L;

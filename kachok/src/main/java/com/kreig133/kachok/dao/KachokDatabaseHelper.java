@@ -17,12 +17,12 @@ import java.sql.SQLException;
  */
 public class KachokDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
-    private static final String DATABASE_NAME = "kachok1.db";
+    private static final String DATABASE_NAME = "kachok2.db";
 
     private static final int DATABASE_VERSION = 1;
     
     private static final Class[] objects = new Class[]{ Clazz.class, Complex.class, 
-            Exercise.class, Sportsman.class, Type.class };
+            Exercise.class, Sportsman.class, Type.class, TypeComplex.class  };
 
     public KachokDatabaseHelper( Context context ) {
         super( context, DATABASE_NAME, null, DATABASE_VERSION );
@@ -32,20 +32,20 @@ public class KachokDatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate( SQLiteDatabase database, ConnectionSource connectionSource ) {
         try {
             for( Class clazz : objects ){
-                TableUtils.createTable( connectionSource, clazz );
+                TableUtils.createTableIfNotExists( connectionSource, clazz );
             }
 
-            final Type type = new Type( "Упражнения на трицепс" );
-
-            getTypeDao().create( type );
+            getTypeDao().create( new Type( "Трицепс, епте" ) );
+            getTypeDao().create( new Type( "Бицуха, понл" ) );
+            getTypeDao().create( new Type( "Спина, красава" ) );
 
             final Complex complex = new Complex( "День 1" );
 
             getComplexDao().create( complex );
 
-            final TypeComplex typeComplex = new TypeComplex( complex, type );
+//            final TypeComplex typeComplex = new TypeComplex( complex, type );
 
-            getTypeComplexDao().create( typeComplex );
+//            getTypeComplexDao().create( typeComplex );
 
             final Complex complex2 = new Complex( "День 2" );
 

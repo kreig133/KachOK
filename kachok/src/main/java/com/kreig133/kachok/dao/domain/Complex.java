@@ -12,6 +12,7 @@ import java.io.Serializable;
  * @version 1.0
  */
 @DatabaseTable
+@SuppressWarnings( "UnusedDeclaration" )
 public class Complex implements Serializable{
 
 
@@ -24,7 +25,7 @@ public class Complex implements Serializable{
     @DatabaseField
     private String name;
 
-    @ForeignCollectionField(eager = false)
+    @ForeignCollectionField(eager = true)
     ForeignCollection<TypeComplex> types;
 
     public Integer getId() {

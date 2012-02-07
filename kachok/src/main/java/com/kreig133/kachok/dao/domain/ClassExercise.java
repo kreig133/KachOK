@@ -10,6 +10,7 @@ import java.io.Serializable;
  * @version 1.0
  */
 @DatabaseTable
+@SuppressWarnings( "UnusedDeclaration" )
 public class ClassExercise implements Serializable {
 
     private static final long serialVersionUID = 6665222270118315478L;

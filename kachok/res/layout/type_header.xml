@@ -5,10 +5,15 @@
               android:layout_height="fill_parent">
 
     <TextView
-            android:id="@+id/exercizeItem"
+            android:id="@+id/typeHeader"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textSize="12pt"
+            android:textSize="14pt"
+            android:gravity="center_horizontal"
             />
+    <View
+            android:layout_height="5dip"
+            android:layout_width="fill_parent"
+            android:background="#FF909090"/>
 
 </LinearLayout>

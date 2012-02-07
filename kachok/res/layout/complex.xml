@@ -8,8 +8,12 @@
         android:id="@+id/complexName"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textSize="15pt"
+        android:textSize="12pt"
         android:gravity="center_horizontal"
     />
+    <View
+            android:layout_height="2dip"
+            android:layout_width="fill_parent"
+            android:background="#FF909090"/>
 
 </LinearLayout>

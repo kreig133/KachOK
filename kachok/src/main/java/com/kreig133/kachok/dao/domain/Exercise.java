@@ -4,7 +4,6 @@ import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.kreig133.kachok.dao.domain.Type;
 
 import java.io.Serializable;
 
@@ -13,6 +12,7 @@ import java.io.Serializable;
  * @version 1.0
  */
 @DatabaseTable
+@SuppressWarnings( "UnusedDeclaration" )
 public class Exercise implements Serializable{
 
     private static final long serialVersionUID = 8386076102152945837L;
@@ -20,7 +20,7 @@ public class Exercise implements Serializable{
     @DatabaseField(generatedId = true)
     private Integer id;
 
-    @DatabaseField
+    @DatabaseField( canBeNull = false )
     private String name;
 
     @DatabaseField( canBeNull = false,  foreign = true )
@@ -32,8 +32,9 @@ public class Exercise implements Serializable{
     @DatabaseField
     private String nameOfRepeats;
 
-    @ForeignCollectionField(eager = true)
+    @ForeignCollectionField(eager = false)
     ForeignCollection<ClassExercise> clazzs;
+
 
     public Integer getId() {
         return id;
@@ -81,5 +82,13 @@ public class Exercise implements Serializable{
 
     public void setClazzs( ForeignCollection<ClassExercise> clazzs ) {
         this.clazzs = clazzs;
+    }
+
+    public Exercise() {
+    }
+
+    public Exercise( String name, Type type ) {
+        this.name = name;
+        this.type = type;
     }
 }

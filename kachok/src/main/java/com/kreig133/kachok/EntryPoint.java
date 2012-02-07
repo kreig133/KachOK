@@ -77,7 +77,7 @@ public class EntryPoint extends OrmLiteBaseActivity<KachokDatabaseHelper> {
     }
 
     private void callComplexPresenter( Context context, Complex complex ) {
-        //TODO вызов
+        ComplexActivity.callMe( context, complex.getId() );
     }
 
     private class ComplexAdapter extends ArrayAdapter<Complex> {

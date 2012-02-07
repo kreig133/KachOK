@@ -10,6 +10,7 @@ import java.io.Serializable;
  * @version 1.0
  */
 @DatabaseTable
+@SuppressWarnings( "UnusedDeclaration" )
 public class TypeComplex implements Serializable{
 
     private static final long serialVersionUID = - 1437119930256837483L;
