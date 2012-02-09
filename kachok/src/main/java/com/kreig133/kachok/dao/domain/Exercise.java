@@ -32,10 +32,6 @@ public class Exercise implements Serializable{
     @DatabaseField
     private String nameOfRepeats;
 
-    @ForeignCollectionField(eager = false)
-    ForeignCollection<ClassExercise> clazzs;
-
-
     public Integer getId() {
         return id;
     }
@@ -74,14 +70,6 @@ public class Exercise implements Serializable{
 
     public void setNameOfRepeats( String nameOfRepeats ) {
         this.nameOfRepeats = nameOfRepeats;
-    }
-
-    public ForeignCollection<ClassExercise> getClazzs() {
-        return clazzs;
-    }
-
-    public void setClazzs( ForeignCollection<ClassExercise> clazzs ) {
-        this.clazzs = clazzs;
     }
 
     public Exercise() {

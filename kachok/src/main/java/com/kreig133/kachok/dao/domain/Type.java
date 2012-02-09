@@ -56,6 +56,4 @@ public class Type implements Serializable{
     public void setExercises( ForeignCollection<Exercise> exercises ) {
         this.exercises = exercises;
     }
-
-
 }

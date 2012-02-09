@@ -13,11 +13,14 @@ import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.j256.ormlite.dao.Dao;
 import com.kreig133.kachok.dao.KachokDatabaseHelper;
 import com.kreig133.kachok.dao.domain.Complex;
+import com.kreig133.kachok.dao.domain.ComplexExercise;
 import com.kreig133.kachok.dao.domain.Exercise;
 import com.kreig133.kachok.dao.domain.Type;
-import com.kreig133.kachok.dao.domain.TypeComplex;
 
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -45,7 +48,6 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
         try {
             Dao<Complex, Integer> dao = getHelper().getComplexDao();
             complex = dao.queryForId( complexId );
-//            kostyl( complex );
         } catch ( SQLException e ) {
             throw new RuntimeException( e );
         }
@@ -64,24 +66,59 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
     private void fillList() throws SQLException {
         layout.removeAllViewsInLayout();
 
-        for ( TypeComplex typeComplex : complex.getTypes() ) {
-            final ListView child = new ListView( this );
-
-            final List<Exercise> query = getHelper().getExercizeDao().query(
-                    getHelper().getExercizeDao().queryBuilder().
-                            where().eq( "type_id", typeComplex.getType().getId() ).prepare()
+        final List<ComplexExercise> list =
+            getHelper().getComplexExerciseDao().query(
+                getHelper().getComplexExerciseDao().queryBuilder().where().eq( "complex_id",
+                    complexId ).prepare()
             );
 
-            child.setAdapter( new ExerciseListAdapter( this, R.layout.exercise, query ) );
+        Collections.sort( list, new Comparator<ComplexExercise>() {
+            @Override
+            public int compare( ComplexExercise complexExercise, ComplexExercise complexExercise1 ) {
+                try {
+                    if ( complexExercise.getExercise().getName() == null ) {
+                        getHelper().getExercizeDao().refresh( complexExercise.getExercise() );
+                    }
+                    if( complexExercise1.getExercise().getName() == null ){
+                        getHelper().getExercizeDao().refresh( complexExercise1.getExercise() );
+                    }
+                } catch ( SQLException e ) {
+                    throw new RuntimeException( e );
+                }
 
-            LayoutInflater vi = ( LayoutInflater ) getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-            View v = vi.inflate( R.layout.type_header, null );
-            fillText( v, R.id.typeHeader,  getHelper().getTypeDao().queryForId( typeComplex.getType().getId() ).getName() );
+                return complexExercise.getExercise().getName().compareTo( complexExercise1.getExercise().getName() );
+            }
+        } );
 
-            layout.addView( v );
+        List<String> types = new LinkedList<String>();
 
-            layout.addView( child );
+        for ( ComplexExercise complexExercise : list ) {
+            getHelper().getTypeDao().refresh( complexExercise.getExercise().getType() );
+        }
+        
+        for ( int i = 0; i < list.size(); i++ ) {
+            if( ! types.contains( list.get( i ).getExercise().getType().getName() ) ){
+                
+                String type = list.get( i ).getExercise().getType().getName();
+                // Добавляем заголовок для типа
+                LayoutInflater vi = ( LayoutInflater ) getSystemService( Context.LAYOUT_INFLATER_SERVICE );
+                View v = vi.inflate( R.layout.type_header, null );
+                fillText( v, R.id.typeHeader, type );
 
+                layout.addView( v );
+                
+                List<Exercise> exercises = new LinkedList<Exercise>();
+                
+                for ( int j = i; j < list.size(); j++ ) {
+                    if( list.get( j ).getExercise().getType().getName().equals( type ) ){
+                        exercises.add( list.get( j ).getExercise() );
+                    }
+                }
+
+                ListView child = new ListView( this );
+                child.setAdapter( new ExerciseListAdapter( this, R.layout.exercise, exercises ) );
+                layout.addView( child );
+            }
         }
     }
 
@@ -116,17 +153,5 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
         Intent intent = new Intent( c, ComplexActivity.class );
         intent.putExtra( COMPLEX_ID, id );
         c.startActivity( intent );
-    }
-
-    private void kostyl( Complex complex ) {
-        try {
-            final List<Type> list =
-                    getHelper().getTypeDao().query( getHelper().getTypeDao().queryBuilder().prepare() );
-            for ( Type type : list ) {
-                getHelper().getTypeComplexDao().create( new TypeComplex( complex, type ) );
-            }
-        } catch ( SQLException e ) {
-            new RuntimeException( e );
-        }
     }
 }

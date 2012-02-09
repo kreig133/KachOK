@@ -17,12 +17,12 @@ import java.sql.SQLException;
  */
 public class KachokDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
-    private static final String DATABASE_NAME = "kachok2.db";
+    private static final String DATABASE_NAME = "kachok4.db";
 
     private static final int DATABASE_VERSION = 1;
     
-    private static final Class[] objects = new Class[]{ Clazz.class, Complex.class, 
-            Exercise.class, Sportsman.class, Type.class, TypeComplex.class  };
+    private static final Class[] objects = new Class[]{ Attempt.class, Complex.class, ComplexExercise.class,
+            Exercise.class, Sportsman.class, Type.class };
 
     public KachokDatabaseHelper( Context context ) {
         super( context, DATABASE_NAME, null, DATABASE_VERSION );
@@ -35,21 +35,7 @@ public class KachokDatabaseHelper extends OrmLiteSqliteOpenHelper {
                 TableUtils.createTableIfNotExists( connectionSource, clazz );
             }
 
-            getTypeDao().create( new Type( "Трицепс, епте" ) );
-            getTypeDao().create( new Type( "Бицуха, понл" ) );
-            getTypeDao().create( new Type( "Спина, красава" ) );
-
-            final Complex complex = new Complex( "День 1" );
-
-            getComplexDao().create( complex );
-
-//            final TypeComplex typeComplex = new TypeComplex( complex, type );
-
-//            getTypeComplexDao().create( typeComplex );
-
-            final Complex complex2 = new Complex( "День 2" );
-
-            getComplexDao().create( complex2 );
+            createData();
 
         } catch ( SQLException e ) {
             Log.e( KachokDatabaseHelper.class.getName(), "Unable to create datbases", e );
@@ -69,19 +55,13 @@ public class KachokDatabaseHelper extends OrmLiteSqliteOpenHelper {
         }
     }
 
-    private Dao<Clazz, Integer> clazzDao;
+    private Dao<Attempt, Integer> attemptDao;
     private Dao<Complex, Integer> complexDao;
+    private Dao<ComplexExercise, Integer> complexExerciseDao;
     private Dao<Exercise,Integer> exerciseDao;
     private Dao<Sportsman,Integer> sportsmanDao;
     private Dao<Type,Integer> typeDao;
-    private Dao<TypeComplex, Integer> typeComplexDao;
 
-    public Dao<Clazz, Integer> getClazzDao() throws SQLException {
-        if ( clazzDao == null ) {
-            clazzDao = getDao( Clazz.class );
-        }
-        return clazzDao;
-    }
 
     public Dao<Complex, Integer> getComplexDao() throws SQLException {
         if ( complexDao == null ) {
@@ -111,11 +91,50 @@ public class KachokDatabaseHelper extends OrmLiteSqliteOpenHelper {
         return typeDao;
     }
 
-    public Dao<TypeComplex, Integer> getTypeComplexDao() throws SQLException{
-        if ( typeComplexDao == null ) {
-            typeComplexDao = getDao( TypeComplex.class );
+    public Dao<Attempt, Integer> getAttemptDao() throws SQLException{
+        if ( attemptDao == null ) {
+            attemptDao = getDao( Attempt.class );
         }
 
-        return typeComplexDao;
+        return attemptDao;
+    }
+
+    public Dao<ComplexExercise, Integer> getComplexExerciseDao() throws SQLException{
+        if ( complexExerciseDao == null ) {
+            complexExerciseDao = getDao( ComplexExercise.class );
+        }
+
+        return complexExerciseDao;
+    }
+
+
+    private void createData() throws SQLException {
+        final Type type1 = new Type( "Трицепс, епте" );
+        getTypeDao().create( type1 );
+        final Type type2 = new Type( "Бицуха, понл" );
+        getTypeDao().create( type2 );
+        final Type type3 = new Type( "Спина, красава" );
+        getTypeDao().create( type3 );
+
+        final Complex complex = new Complex( "День 1" );
+        getComplexDao().create( complex );
+
+        final Complex complex2 = new Complex( "День 2" );
+        getComplexDao().create( complex2 );
+
+        final Exercise exercise  = new Exercise( "Француский жим", type1 );
+        final Exercise exercise1 = new Exercise( "С гантелями стоя", type2 );
+        final Exercise exercise2 = new Exercise( "Гиперэкстензия", type3 );
+        getExercizeDao().create( exercise );
+        getExercizeDao().create( exercise1 );
+        getExercizeDao().create( exercise2 );
+
+        getComplexExerciseDao().create( new ComplexExercise( exercise, complex ) );
+        getComplexExerciseDao().create( new ComplexExercise( exercise, complex2 ) );
+        getComplexExerciseDao().create( new ComplexExercise( exercise1, complex ) );
+        getComplexExerciseDao().create( new ComplexExercise( exercise1, complex2 ) );
+        getComplexExerciseDao().create( new ComplexExercise( exercise2, complex ) );
+        getComplexExerciseDao().create( new ComplexExercise( exercise2, complex2 ) );
+
     }
 }

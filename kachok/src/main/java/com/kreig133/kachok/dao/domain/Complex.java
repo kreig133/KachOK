@@ -26,7 +26,7 @@ public class Complex implements Serializable{
     private String name;
 
     @ForeignCollectionField(eager = true)
-    ForeignCollection<TypeComplex> types;
+    ForeignCollection<ComplexExercise> exercises;
 
     public Integer getId() {
         return id;
@@ -44,12 +44,12 @@ public class Complex implements Serializable{
         this.name = name;
     }
 
-    public ForeignCollection<TypeComplex> getTypes() {
-        return types;
+    public ForeignCollection<ComplexExercise> getExercises() {
+        return exercises;
     }
 
-    public void setTypes( ForeignCollection<TypeComplex> types ) {
-        this.types = types;
+    public void setExercises( ForeignCollection<ComplexExercise> exercises ) {
+        this.exercises = exercises;
     }
 
     public Complex() {
