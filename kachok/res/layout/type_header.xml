@@ -11,7 +11,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:textSize="9pt"
-            android:paddingLeft="20px"
+            android:paddingLeft="35px"
             />
     <View
             android:layout_height="5dip"

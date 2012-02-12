@@ -6,10 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.widget.*;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.j256.ormlite.dao.Dao;
 import com.kreig133.kachok.dao.KachokDatabaseHelper;
@@ -18,10 +15,7 @@ import com.kreig133.kachok.dao.domain.ComplexExercise;
 import com.kreig133.kachok.dao.domain.Exercise;
 
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author C.C.-fag
@@ -33,13 +27,29 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
 
     private Complex complex;
     private ViewGroup layout;
-    
+    private List<String> types;
+    private List<List<Exercise>> listOfListsOfExercise;
+    private ExpandableListView expandableListView;
+
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
         setContentView( R.layout.complex_list );
 
         layout = ( ViewGroup ) findViewById( R.id.complexListLayout );
+        expandableListView = ( ExpandableListView ) findViewById( R.id.expandableListOfExercise );
+
+        expandableListView.setOnChildClickListener( new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick( ExpandableListView parent, View v, int groupPosition, int childPosition, long id ) {
+
+                ExerciseActivity.callMe(
+                        ComplexActivity.this,
+                        listOfListsOfExercise.get( groupPosition ).get( childPosition ).getId()
+                );
+                return true;
+            }
+        } );
 
         getCurrentComplex();
     }
@@ -57,104 +67,96 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
     protected void onResume() {
         super.onResume();
         try {
-            fillList();
+            fillList2();
         } catch ( SQLException ex ) {
             throw new RuntimeException( ex );
         }
     }
 
-    private void fillList() throws SQLException {
-        layout.removeAllViewsInLayout();
 
-        final List<ComplexExercise> list =
-            getHelper().getComplexExerciseDao().query(
-                    getHelper().getComplexExerciseDao().queryBuilder().where().eq( "complex_id",
-                            complex.getId() ).prepare()
-            );
+    private void fillList2() throws SQLException{
 
-        Collections.sort( list, new Comparator<ComplexExercise>() {
-            @Override
-            public int compare( ComplexExercise complexExercise, ComplexExercise complexExercise1 ) {
-                try {
-                    if ( complexExercise.getExercise().getName() == null ) {
-                        getHelper().getExercizeDao().refresh( complexExercise.getExercise() );
-                    }
-                    if( complexExercise1.getExercise().getName() == null ){
-                        getHelper().getExercizeDao().refresh( complexExercise1.getExercise() );
-                    }
-                } catch ( SQLException e ) {
-                    throw new RuntimeException( e );
-                }
+        final List<ComplexExercise> list = getComplexExerciseList();
 
-                return complexExercise.getExercise().getName().compareTo( complexExercise1.getExercise().getName() );
-            }
-        } );
+        sortComplexExerciesByExerciseName( list );
 
-        List<String> types = new LinkedList<String>();
+        types = new LinkedList<String>();
+        listOfListsOfExercise = new ArrayList<List<Exercise>>();
 
-        for ( ComplexExercise complexExercise : list ) {
-            getHelper().getTypeDao().refresh( complexExercise.getExercise().getType() );
-        }
-        
         for ( int i = 0; i < list.size(); i++ ) {
             if( ! types.contains( list.get( i ).getExercise().getType().getName() ) ){
-                
+
                 String type = list.get( i ).getExercise().getType().getName();
                 types.add( type );
-                // Добавляем заголовок для типа
-                LayoutInflater vi = ( LayoutInflater ) getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-                View v = vi.inflate( R.layout.type_header, null );
-                fillText( v, R.id.typeHeader, type );
-
-                layout.addView( v );
-                
                 List<Exercise> exercises = new LinkedList<Exercise>();
-                
+
                 for ( int j = i; j < list.size(); j++ ) {
                     if( list.get( j ).getExercise().getType().getName().equals( type ) ){
                         exercises.add( list.get( j ).getExercise() );
                     }
                 }
-
-                final ListView child = new ListView( this );
-
-                child.setOnItemClickListener( new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick( AdapterView<?> parent, View view, int position, long id ) {
-                        Exercise exercise = (Exercise) child.getAdapter().getItem( position );
-                        ExerciseActivity.callMe( ComplexActivity.this, exercise.getId() );
-                    }
-                } );
-
-                child.setAdapter( new ExerciseListAdapter( this, R.layout.exercise, exercises ) );
-                layout.addView( child );
+                listOfListsOfExercise.add( exercises );
             }
         }
+
+        expandableListView.setAdapter( new SimpleExpandableListAdapter(
+                ComplexActivity.this,
+                getTypeHeaders( types ),
+                R.layout.type_header,
+                new String[] { "typeName" },
+                new int[] { R.id.typeHeader },
+                getData( listOfListsOfExercise ),
+                R.layout.exercise,
+                new String[] { "exerciseName" },
+                new int[] { R.id.exercizeItem }
+        ) );
     }
 
-    private class ExerciseListAdapter extends ArrayAdapter<Exercise> {
+    private List<List<Map<String, String>>> getData( List<List<Exercise>> listListsOfExercise ) {
+        List<List<Map<String, String>>> result = new ArrayList<List<Map<String, String>>>();
 
-        public ExerciseListAdapter( Context context, int textViewResourceId, List<Exercise> items ) {
-            super( context, textViewResourceId, items );
-        }
-
-        @Override
-        public View getView( int position, View convertView, ViewGroup parent ) {
-            View v = convertView;
-            if ( v == null ) {
-                LayoutInflater vi = ( LayoutInflater ) getSystemService( Context.LAYOUT_INFLATER_SERVICE );
-                v = vi.inflate( R.layout.exercise, null );
+        for ( List<Exercise> list : listListsOfExercise ) {
+            List<Map<String, String>> listOfMap = new ArrayList<Map<String, String>>();
+            for ( Exercise exercise : list ) {
+                Map<String, String> map = new HashMap<String, String>();
+                map.put( "exerciseName", exercise.getName() );
+                listOfMap.add( map );
             }
-
-            fillText( v, R.id.exercizeItem, getItem( position ).getName() );
-
-            return v;
+            result.add( listOfMap );
         }
+        return result;
     }
 
-    private void fillText( View v, int id, String text ) {
-        TextView textView = ( TextView ) v.findViewById( id );
-        textView.setText( text == null ? "" : text );
+    private List<Map<String, String>> getTypeHeaders( List<String> types ) {
+        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+        for ( String type : types ) {
+            Map<String, String> map = new HashMap<String, String>( 1 );
+            map.put( "typeName", type );
+            result.add( map );
+        }
+        return result;
+    }
+
+    private List<ComplexExercise> getComplexExerciseList() throws SQLException {
+        final List<ComplexExercise> list = getHelper().getComplexExerciseDao().query(
+                getHelper().getComplexExerciseDao().queryBuilder().where().eq( "complex_id",
+                        complex.getId() ).prepare()
+        );
+
+        for ( ComplexExercise complexExercise : list ) {
+            getHelper().getExercizeDao().refresh( complexExercise.getExercise() );
+            getHelper().getTypeDao().refresh( complexExercise.getExercise().getType() );
+        }
+        return list;
+    }
+
+    private void sortComplexExerciesByExerciseName( List<ComplexExercise> list ) {
+        Collections.sort( list, new Comparator<ComplexExercise>() {
+            @Override
+            public int compare( ComplexExercise complexExercise, ComplexExercise complexExercise1 ) {
+                return complexExercise.getExercise().getName().compareTo( complexExercise1.getExercise().getName() );
+            }
+        } );
     }
 
     public static void callMe( Context c, Integer id ) {

@@ -8,6 +8,10 @@
     style="@style/background"
     android:scrollbarAlwaysDrawVerticalTrack="true"
     >
-
+    <ExpandableListView
+        android:id="@+id/expandableListOfExercise"
+        android:layout_height="fill_parent"
+        android:layout_width="fill_parent"
+        />
 
 </LinearLayout>
