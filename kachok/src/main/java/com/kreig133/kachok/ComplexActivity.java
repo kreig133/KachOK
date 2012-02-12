@@ -16,7 +16,6 @@ import com.kreig133.kachok.dao.KachokDatabaseHelper;
 import com.kreig133.kachok.dao.domain.Complex;
 import com.kreig133.kachok.dao.domain.ComplexExercise;
 import com.kreig133.kachok.dao.domain.Exercise;
-import com.kreig133.kachok.dao.domain.Type;
 
 import java.sql.SQLException;
 import java.util.Collections;
@@ -32,23 +31,23 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
 
     private static final String COMPLEX_ID = "complexId";
 
-    private int complexId;
     private Complex complex;
     private ViewGroup layout;
     
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
         super.onCreate( savedInstanceState );
-        setContentView( R.layout.complex_items );
-
-
-        complexId = getIntent().getIntExtra( COMPLEX_ID, - 1 );
+        setContentView( R.layout.complex_list );
 
         layout = ( ViewGroup ) findViewById( R.id.complexListLayout );
 
+        getCurrentComplex();
+    }
+
+    private void getCurrentComplex() {
         try {
             Dao<Complex, Integer> dao = getHelper().getComplexDao();
-            complex = dao.queryForId( complexId );
+            complex = dao.queryForId( getIntent().getIntExtra( COMPLEX_ID, - 1 ) );
         } catch ( SQLException e ) {
             throw new RuntimeException( e );
         }
@@ -70,7 +69,7 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
         final List<ComplexExercise> list =
             getHelper().getComplexExerciseDao().query(
                     getHelper().getComplexExerciseDao().queryBuilder().where().eq( "complex_id",
-                            complexId ).prepare()
+                            complex.getId() ).prepare()
             );
 
         Collections.sort( list, new Comparator<ComplexExercise>() {
@@ -101,6 +100,7 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
             if( ! types.contains( list.get( i ).getExercise().getType().getName() ) ){
                 
                 String type = list.get( i ).getExercise().getType().getName();
+                types.add( type );
                 // Добавляем заголовок для типа
                 LayoutInflater vi = ( LayoutInflater ) getSystemService( Context.LAYOUT_INFLATER_SERVICE );
                 View v = vi.inflate( R.layout.type_header, null );
@@ -150,8 +150,6 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
 
             return v;
         }
-
-
     }
 
     private void fillText( View v, int id, String text ) {

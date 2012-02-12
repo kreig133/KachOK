@@ -6,6 +6,7 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     style="@style/background"
+    android:scrollbarAlwaysDrawVerticalTrack="true"
     >
 
 

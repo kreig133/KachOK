@@ -22,7 +22,7 @@ public class Attempt implements Serializable{
     private Integer numberOfRepeat;
 
     @DatabaseField
-    private Integer weight;
+    private Double weight;
 
     @DatabaseField
     private Date date;
@@ -37,10 +37,6 @@ public class Attempt implements Serializable{
         return id;
     }
 
-    public void setId( Integer id ) {
-        this.id = id;
-    }
-
     public Integer getNumberOfRepeat() {
         return numberOfRepeat;
     }
@@ -49,11 +45,11 @@ public class Attempt implements Serializable{
         this.numberOfRepeat = numberOfRepeat;
     }
 
-    public Integer getWeight() {
+    public Double getWeight() {
         return weight;
     }
 
-    public void setWeight( Integer weight ) {
+    public void setWeight( Double weight ) {
         this.weight = weight;
     }
 

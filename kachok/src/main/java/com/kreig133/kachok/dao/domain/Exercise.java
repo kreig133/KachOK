@@ -26,18 +26,17 @@ public class Exercise implements Serializable{
     @DatabaseField( canBeNull = false,  foreign = true )
     private Type type;
 
+    @DatabaseField( foreign = true, canBeNull = false )
+    private AttemptType attemptType;
+
+    @DatabaseField( foreign = true, canBeNull = false )
+    private WeightType weightType;
+
     @DatabaseField
     private Integer countOfRepeats;
 
-    @DatabaseField
-    private String nameOfRepeats;
-
     public Integer getId() {
         return id;
-    }
-
-    public void setId( Integer id ) {
-        this.id = id;
     }
 
     public String getName() {
@@ -56,6 +55,22 @@ public class Exercise implements Serializable{
         this.type = type;
     }
 
+    public AttemptType getAttemptType() {
+        return attemptType;
+    }
+
+    public void setAttemptType( AttemptType attemptType ) {
+        this.attemptType = attemptType;
+    }
+
+    public WeightType getWeightType() {
+        return weightType;
+    }
+
+    public void setWeightType( WeightType weightType ) {
+        this.weightType = weightType;
+    }
+
     public Integer getCountOfRepeats() {
         return countOfRepeats;
     }
@@ -64,19 +79,14 @@ public class Exercise implements Serializable{
         this.countOfRepeats = countOfRepeats;
     }
 
-    public String getNameOfRepeats() {
-        return nameOfRepeats;
-    }
-
-    public void setNameOfRepeats( String nameOfRepeats ) {
-        this.nameOfRepeats = nameOfRepeats;
-    }
-
     public Exercise() {
     }
 
-    public Exercise( String name, Type type ) {
+    public Exercise( String name, Type type, AttemptType attemptType, WeightType weightType, Integer countOfRepeats ) {
         this.name = name;
         this.type = type;
+        this.attemptType = attemptType;
+        this.weightType = weightType;
+        this.countOfRepeats = countOfRepeats;
     }
 }
