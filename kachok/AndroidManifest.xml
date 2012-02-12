@@ -10,6 +10,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".ComplexActivity"/>
+        <activity android:name=".ExerciseActivity"/>
     </application>
 
 </manifest>

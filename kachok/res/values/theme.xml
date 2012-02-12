@@ -1,0 +1,17 @@
+<resources>
+    <!--<style name="HabraTheme" parent="@android:style/Theme.Black">-->
+        <!--<item name="android:windowBackground">@color/main</item>-->
+        <!--<item name="android:textColor">#F0E68C</item>-->
+    <!--</style>-->
+    <!--<style name="HabraThemeButton" parent="@android:style/Widget.Button">-->
+        <!--<item name="android:background">@drawable/hbutton</item>-->
+    <!--</style>-->
+    <style name="background">
+        <item name="android:background">@drawable/background</item>
+    </style>
+    <style name="header">
+        <item name="android:background">@drawable/header</item>
+    </style>
+    <color name="main">#370903FF</color>
+
+</resources>

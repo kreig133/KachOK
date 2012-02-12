@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -68,8 +69,8 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
 
         final List<ComplexExercise> list =
             getHelper().getComplexExerciseDao().query(
-                getHelper().getComplexExerciseDao().queryBuilder().where().eq( "complex_id",
-                    complexId ).prepare()
+                    getHelper().getComplexExerciseDao().queryBuilder().where().eq( "complex_id",
+                            complexId ).prepare()
             );
 
         Collections.sort( list, new Comparator<ComplexExercise>() {
@@ -115,7 +116,16 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
                     }
                 }
 
-                ListView child = new ListView( this );
+                final ListView child = new ListView( this );
+
+                child.setOnItemClickListener( new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick( AdapterView<?> parent, View view, int position, long id ) {
+                        Exercise exercise = (Exercise) child.getAdapter().getItem( position );
+                        ExerciseActivity.callMe( ComplexActivity.this, exercise.getId() );
+                    }
+                } );
+
                 child.setAdapter( new ExerciseListAdapter( this, R.layout.exercise, exercises ) );
                 layout.addView( child );
             }

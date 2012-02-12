@@ -2,14 +2,16 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
-              android:layout_height="fill_parent">
+              android:layout_height="fill_parent"
+              style="@style/header"
+        >
 
     <TextView
             android:id="@+id/typeHeader"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textSize="14pt"
-            android:gravity="center_horizontal"
+            android:textSize="9pt"
+            android:paddingLeft="20px"
             />
     <View
             android:layout_height="5dip"
