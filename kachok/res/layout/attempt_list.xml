@@ -4,6 +4,7 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               style="@style/background"
+              android:orientation="vertical"
         >
     <LinearLayout
         android:layout_width="fill_parent"
@@ -66,7 +67,7 @@
                 />
     </LinearLayout>
 
-    <ListView
+    <ExpandableListView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_weight="100"

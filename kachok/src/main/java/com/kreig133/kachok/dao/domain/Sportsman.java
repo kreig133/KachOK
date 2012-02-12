@@ -36,4 +36,11 @@ public class Sportsman implements Serializable{
     public void setName( String name ) {
         this.name = name;
     }
+
+    public Sportsman() {
+    }
+
+    public Sportsman( String name ) {
+        this.name = name;
+    }
 }

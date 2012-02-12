@@ -24,6 +24,8 @@ import java.util.*;
 public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
 
     private static final String COMPLEX_ID = "complexId";
+    private static final String TYPE_NAME = "typeName";
+    private static final String EXERCISE_NAME = "exerciseName";
 
     private Complex complex;
     private ViewGroup layout;
@@ -103,11 +105,11 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
                 ComplexActivity.this,
                 getTypeHeaders( types ),
                 R.layout.type_header,
-                new String[] { "typeName" },
+                new String[] { TYPE_NAME },
                 new int[] { R.id.typeHeader },
                 getData( listOfListsOfExercise ),
                 R.layout.exercise,
-                new String[] { "exerciseName" },
+                new String[] { EXERCISE_NAME },
                 new int[] { R.id.exercizeItem }
         ) );
     }
@@ -119,7 +121,7 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
             List<Map<String, String>> listOfMap = new ArrayList<Map<String, String>>();
             for ( Exercise exercise : list ) {
                 Map<String, String> map = new HashMap<String, String>();
-                map.put( "exerciseName", exercise.getName() );
+                map.put( EXERCISE_NAME, exercise.getName() );
                 listOfMap.add( map );
             }
             result.add( listOfMap );
@@ -131,7 +133,7 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
         List<Map<String, String>> result = new ArrayList<Map<String, String>>();
         for ( String type : types ) {
             Map<String, String> map = new HashMap<String, String>( 1 );
-            map.put( "typeName", type );
+            map.put( TYPE_NAME, type );
             result.add( map );
         }
         return result;

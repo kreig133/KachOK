@@ -2,25 +2,9 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
-              android:orientation="vertical"
-        >
-
-    <TextView
-            android:id="@+id/exercizeItem"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textSize="8pt"
-            android:paddingLeft="5px"
-            android:text="Название может быть очень очень длинным, сука"
-            />
-    <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
+              android:layout_height="fill_parent">
         <TextView
-                android:id="@+id/exercizeDate"
+                android:id="@+id/attemptTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="left"
@@ -33,13 +17,13 @@
                 android:layout_weight="100"
                 />
         <TextView
-                android:id="@+id/exercizeRepeatName"
+                android:id="@+id/attemptCountOfRepeat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="10"
                 />
         <TextView
-                android:id="@+id/exercizeRepeatName"
+                android:id="@+id/attemptRepeatName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="5px"
@@ -52,19 +36,17 @@
                 android:layout_weight="100"
                 />
         <TextView
-                android:id="@+id/exercizeWeight"
+                android:id="@+id/attemptWeight"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:layout_gravity="right"
                 android:text="100"/>
         <TextView
-                android:id="@+id/exercizeWeightName"
+                android:id="@+id/attemptWeightName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="5px"
                 android:paddingRight="5px"
                 android:text="кг"
                 />
-    </LinearLayout>
-
 </LinearLayout>
