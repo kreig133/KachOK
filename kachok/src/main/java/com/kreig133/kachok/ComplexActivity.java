@@ -54,6 +54,8 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
         } );
 
         getCurrentComplex();
+
+        ( (TextView) findViewById( R.id.complexName ) ).setText( complex.getName() );
     }
 
     private void getCurrentComplex() {
