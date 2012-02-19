@@ -29,6 +29,9 @@ public class ComplexExercise implements Serializable {
     @DatabaseField
     private Integer countOfRepeat;
 
+    @DatabaseField
+    private Integer countOfAttempts;
+
     public Integer getId() {
         return id;
     }
@@ -67,6 +70,14 @@ public class ComplexExercise implements Serializable {
 
     public void setOrder( Integer order ) {
         this.order = order;
+    }
+
+    public Integer getCountOfAttempts() {
+        return countOfAttempts;
+    }
+
+    public void setCountOfAttempts( Integer countOfAttempts ) {
+        this.countOfAttempts = countOfAttempts;
     }
 
     public ComplexExercise() {
