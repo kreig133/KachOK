@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class KachokDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
-    private static final String DATABASE_NAME = "kachok5.db";
+    private static final String DATABASE_NAME = "kachok10.db";
 
     private static final int DATABASE_VERSION = 1;
     
@@ -191,12 +191,12 @@ public class KachokDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
         for ( Exercise exercise : day1 ) {
             getExercizeDao().create( exercise );
-            getComplexExerciseDao().create( new ComplexExercise( exercise, complex ) );
+            getComplexExerciseDao().create( new ComplexExercise( exercise, complex, day1.indexOf( exercise ) ) );
         }
 
         for ( Exercise exercise : day2 ) {
             getExercizeDao().create( exercise );
-            getComplexExerciseDao().create( new ComplexExercise( exercise, complex2 ) );
+            getComplexExerciseDao().create( new ComplexExercise( exercise, complex2, day2.indexOf( exercise ) ) );
         }
    }
 }

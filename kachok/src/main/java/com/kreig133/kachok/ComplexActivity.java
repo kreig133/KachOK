@@ -3,7 +3,6 @@ package com.kreig133.kachok;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -71,36 +70,42 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
     protected void onResume() {
         super.onResume();
         try {
-            fillList2();
+            fillList();
         } catch ( SQLException ex ) {
             throw new RuntimeException( ex );
         }
     }
 
 
-    private void fillList2() throws SQLException{
+    private void fillList() throws SQLException{
 
         final List<ComplexExercise> list = getComplexExerciseList();
 
-        sortComplexExerciesByExerciseName( list );
+//        sortComplexExerciesByExerciseName( list );
 
         types = new LinkedList<String>();
         listOfListsOfExercise = new ArrayList<List<Exercise>>();
 
+        String previousType = "";
+        List<Exercise> exercises = null;
         for ( int i = 0; i < list.size(); i++ ) {
-            if( ! types.contains( list.get( i ).getExercise().getType().getName() ) ){
+            if(  ! list.get( i ).getExercise().getType().getName().equals( previousType ) ) {
 
-                String type = list.get( i ).getExercise().getType().getName();
+                String type = ( previousType = list.get( i ).getExercise().getType().getName() );
                 types.add( type );
-                List<Exercise> exercises = new LinkedList<Exercise>();
 
-                for ( int j = i; j < list.size(); j++ ) {
-                    if( list.get( j ).getExercise().getType().getName().equals( type ) ){
-                        exercises.add( list.get( j ).getExercise() );
-                    }
+                if ( exercises != null ) {
+                    listOfListsOfExercise.add( exercises );
                 }
-                listOfListsOfExercise.add( exercises );
+                exercises = new LinkedList<Exercise>();
             }
+
+            assert exercises != null;
+            exercises.add( list.get( i ).getExercise() );
+        }
+
+        if ( exercises != null ) {
+            listOfListsOfExercise.add( exercises );
         }
 
         expandableListView.setAdapter( new SimpleExpandableListAdapter(
@@ -143,8 +148,8 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
 
     private List<ComplexExercise> getComplexExerciseList() throws SQLException {
         final List<ComplexExercise> list = getHelper().getComplexExerciseDao().query(
-                getHelper().getComplexExerciseDao().queryBuilder().where().eq( "complex_id",
-                        complex.getId() ).prepare()
+                getHelper().getComplexExerciseDao().queryBuilder().orderBy( "order", true ).
+                        where().eq( "complex_id", complex.getId() ).prepare()
         );
 
         for ( ComplexExercise complexExercise : list ) {
@@ -152,15 +157,6 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
             getHelper().getTypeDao().refresh( complexExercise.getExercise().getType() );
         }
         return list;
-    }
-
-    private void sortComplexExerciesByExerciseName( List<ComplexExercise> list ) {
-        Collections.sort( list, new Comparator<ComplexExercise>() {
-            @Override
-            public int compare( ComplexExercise complexExercise, ComplexExercise complexExercise1 ) {
-                return complexExercise.getExercise().getName().compareTo( complexExercise1.getExercise().getName() );
-            }
-        } );
     }
 
     public static void callMe( Context c, Integer id ) {
