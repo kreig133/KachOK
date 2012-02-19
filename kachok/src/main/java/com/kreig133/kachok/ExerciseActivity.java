@@ -10,6 +10,7 @@ import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.j256.ormlite.dao.Dao;
 import com.kreig133.kachok.dao.KachokDatabaseHelper;
 import com.kreig133.kachok.dao.domain.Attempt;
+import com.kreig133.kachok.dao.domain.ComplexExercise;
 import com.kreig133.kachok.dao.domain.Exercise;
 import com.kreig133.kachok.dao.domain.Sportsman;
 
@@ -29,6 +30,7 @@ public class ExerciseActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> 
     private static final String TIME = "time";
     private static final String COUNT_OF_TRYING = "countOfTrying";
     private static final String WEIGHT = "weight";
+    private static final String COMPLEX_ID = "complexId";
     private Exercise exercise;
     private Button addButton;
     private EditText countOfTrying;
@@ -36,6 +38,7 @@ public class ExerciseActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> 
     private ExpandableListView tryingList;
     private DateFormat dateFormat = new SimpleDateFormat( "dd MMMM yyyy" );
     private DateFormat timeFormat = new SimpleDateFormat( "hh:mm" );
+    private ComplexExercise complexExercise;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -56,7 +59,7 @@ public class ExerciseActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> 
 
         getCurrentExercise();
 
-        ( ( TextView ) findViewById( R.id.exerciseName ) ).setText( exercise.getName() );
+        ( ( TextView ) findViewById( R.id.exerciseName ) ).setText( getCurrentTitle() );
     }
 
     @Override
@@ -195,16 +198,33 @@ public class ExerciseActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> 
 
     private void getCurrentExercise() {
         try{
-            final Dao<Exercise, Integer> exercizeDao = getHelper().getExercizeDao();
-            exercise = exercizeDao.queryForId( getIntent().getIntExtra( EXERCISE_ID, - 1 ) );
+            exercise = getHelper().getExercizeDao().queryForId( getIntent().getIntExtra( EXERCISE_ID, - 1 ) );
+            final List<ComplexExercise> complexExercises = getHelper().getComplexExerciseDao().query(
+                    getHelper().getComplexExerciseDao().queryBuilder()
+                            .where()
+                            .eq( "exercise_id", getIntent().getIntExtra( EXERCISE_ID, - 1 ) )
+                            .and()
+                            .eq( "complex_id", getIntent().getIntExtra( COMPLEX_ID, - 1 ) ).prepare()
+            );
+
+            assert complexExercises.size() == 1;
+
+            complexExercise = complexExercises.get( 0 );
         } catch ( SQLException e ) {
             throw new RuntimeException( e );
         }
     }
 
-    public static void callMe( Context c, Integer id ) {
+    public static void callMe( Context c, Integer exerciseId, Integer complexId ) {
         Intent intent = new Intent( c, ExerciseActivity.class );
-        intent.putExtra( EXERCISE_ID, id );
+        intent.putExtra( EXERCISE_ID, exerciseId );
+        intent.putExtra( COMPLEX_ID, complexId );
         c.startActivity( intent );
+    }
+
+    public CharSequence getCurrentTitle() {
+        return new StringBuilder( exercise.getName() ).append( " (" ).append( complexExercise.getCountOfAttempts() )
+                .append( " подхода по " ).append( complexExercise.getCountOfRepeat() == - 1 ? "MAX" :
+                        complexExercise.getCountOfRepeat() ).append( " раз)" ).toString();
     }
 }

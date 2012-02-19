@@ -54,7 +54,8 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
 
                 ExerciseActivity.callMe(
                         ComplexActivity.this,
-                        listOfListsOfExercise.get( groupPosition ).get( childPosition ).getId()
+                        listOfListsOfExercise.get( groupPosition ).get( childPosition ).getId(),
+                        complex.getId()
                 );
                 return true;
             }
