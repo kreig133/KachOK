@@ -9,11 +9,14 @@ import android.widget.*;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.j256.ormlite.dao.Dao;
 import com.kreig133.kachok.dao.KachokDatabaseHelper;
+import com.kreig133.kachok.dao.domain.Attempt;
 import com.kreig133.kachok.dao.domain.Complex;
 import com.kreig133.kachok.dao.domain.ComplexExercise;
 import com.kreig133.kachok.dao.domain.Exercise;
 
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -25,12 +28,17 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
     private static final String COMPLEX_ID = "complexId";
     private static final String TYPE_NAME = "typeName";
     private static final String EXERCISE_NAME = "exerciseName";
+    private static final String EXERCISE_DATE = "exerciseDate";
+    private static final String EXERCISE_WEIGHT = "exerciseWeight";
+    private static final String EXERCISE_REPEAT_COUNT = "exerciseRepeatCount";
 
     private Complex complex;
     private ViewGroup layout;
     private List<String> types;
     private List<List<Exercise>> listOfListsOfExercise;
     private ExpandableListView expandableListView;
+
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat( "dd.MM.yyyy" );
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -116,24 +124,54 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
                 new int[] { R.id.typeHeader },
                 getData( listOfListsOfExercise ),
                 R.layout.exercise,
-                new String[] { EXERCISE_NAME },
-                new int[] { R.id.exercizeItem }
+                new String[] { EXERCISE_NAME, EXERCISE_DATE, EXERCISE_WEIGHT, EXERCISE_REPEAT_COUNT },
+                new int[] { R.id.exercizeItem, R.id.exercizeDate, R.id.exercizeWeight, R.id.exercizeRepeatCount }
         ) );
     }
 
-    private List<List<Map<String, String>>> getData( List<List<Exercise>> listListsOfExercise ) {
+    private List<List<Map<String, String>>> getData( List<List<Exercise>> listListsOfExercise ) throws SQLException {
         List<List<Map<String, String>>> result = new ArrayList<List<Map<String, String>>>();
 
         for ( List<Exercise> list : listListsOfExercise ) {
             List<Map<String, String>> listOfMap = new ArrayList<Map<String, String>>();
             for ( Exercise exercise : list ) {
+                final List<Attempt> lastAttempt = getHelper().getAttemptDao().query(
+                        getHelper().getAttemptDao().queryBuilder().orderBy( "date",
+                                false ).limit( 1L ).where().eq( "exercise_id", exercise.getId() ).prepare()
+                );
+
                 Map<String, String> map = new HashMap<String, String>();
                 map.put( EXERCISE_NAME, exercise.getName() );
+                map.put( EXERCISE_DATE, extractLastDate( lastAttempt ) );
+                map.put( EXERCISE_WEIGHT, extractLastWeight( lastAttempt ) );
+                map.put( EXERCISE_REPEAT_COUNT, extractLastRepeatTime( lastAttempt ) );
                 listOfMap.add( map );
             }
             result.add( listOfMap );
         }
         return result;
+    }
+
+    private String extractLastRepeatTime( List<Attempt> lastAttempt ) {
+        if ( lastAttempt == null || lastAttempt.isEmpty() ) {
+            return "--";
+        }
+        return lastAttempt.get( 0 ).getNumberOfRepeat().toString();
+    }
+
+    private String extractLastWeight( List<Attempt> lastAttempt ) {
+        if ( lastAttempt == null || lastAttempt.isEmpty() ) {
+            return "--";
+        }
+
+        return lastAttempt.get( 0 ).getWeight().toString();
+    }
+
+    private String extractLastDate( List<Attempt> lastAttempt ) {
+        if ( lastAttempt == null || lastAttempt.isEmpty() ) {
+            return "Ни разу";
+        }
+        return simpleDateFormat.format( lastAttempt.get( 0 ).getDate() );
     }
 
     private List<Map<String, String>> getTypeHeaders( List<String> types ) {
