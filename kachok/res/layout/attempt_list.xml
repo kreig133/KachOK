@@ -6,6 +6,14 @@
               style="@style/background"
               android:orientation="vertical"
         >
+    <TextView
+        android:id="@+id/exerciseName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="9pt"
+        android:gravity="center"
+        />
+
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -15,7 +23,7 @@
         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="10pt"
+                android:textSize="8pt"
                 android:paddingLeft="10px"
                 android:text="Я сейчас сделал"/>
 
@@ -39,7 +47,7 @@
                     android:layout_height="wrap_content"
                     android:paddingLeft="4px"
                     android:textSize="8pt"
-                    android:text="попыток"/>
+                    android:text="раз   x"/>
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

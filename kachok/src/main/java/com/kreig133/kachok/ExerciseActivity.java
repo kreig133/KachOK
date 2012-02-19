@@ -5,10 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ExpandableListView;
-import android.widget.SimpleExpandableListAdapter;
+import android.widget.*;
 import com.j256.ormlite.android.apptools.OrmLiteBaseActivity;
 import com.j256.ormlite.dao.Dao;
 import com.kreig133.kachok.dao.KachokDatabaseHelper;
@@ -56,7 +53,10 @@ public class ExerciseActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> 
                 addNewTrying();
             }
         } );
+
         getCurrentExercise();
+
+        ( ( TextView ) findViewById( R.id.exerciseName ) ).setText( exercise.getName() );
     }
 
     @Override
