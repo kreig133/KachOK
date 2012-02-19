@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class KachokDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
-    private static final String DATABASE_NAME = "kachok10.db";
+    private static final String DATABASE_NAME = "kachok11.db";
 
     private static final int DATABASE_VERSION = 1;
     
@@ -191,12 +191,59 @@ public class KachokDatabaseHelper extends OrmLiteSqliteOpenHelper {
 
         for ( Exercise exercise : day1 ) {
             getExercizeDao().create( exercise );
-            getComplexExerciseDao().create( new ComplexExercise( exercise, complex, day1.indexOf( exercise ) ) );
+            final ComplexExercise data = new ComplexExercise( exercise, complex, day1.indexOf( exercise ) );
+            switch ( day1.indexOf( exercise ) ) {
+                case 0:
+                    data.setCountOfAttempts( 3 );
+                    break;
+                default:
+                    data.setCountOfAttempts( 4 );
+            }
+            switch ( day1.indexOf( exercise ) ) {
+                case 0:
+                case 3:
+                case 4:
+                    data.setCountOfRepeat( -1 );
+                    break;
+                case 7:
+                    data.setCountOfRepeat( 12 );
+                    break;
+                default:
+                    data.setCountOfRepeat( 10 );
+            }
+
+
+            getComplexExerciseDao().create( data );
         }
 
         for ( Exercise exercise : day2 ) {
             getExercizeDao().create( exercise );
-            getComplexExerciseDao().create( new ComplexExercise( exercise, complex2, day2.indexOf( exercise ) ) );
+            final ComplexExercise data = new ComplexExercise( exercise, complex2, day2.indexOf( exercise ) );
+
+            switch ( day1.indexOf( exercise ) ) {
+                case 0:
+                    data.setCountOfAttempts( 3 );
+                    break;
+                default:
+                    data.setCountOfAttempts( 4 );
+            }
+
+            switch ( day1.indexOf( exercise ) ) {
+                case 0:
+                    data.setCountOfRepeat( -1 );
+                    break;
+                case 1:
+                case 6:
+                case 9:
+                case 10:
+                    data.setCountOfRepeat( 12 );
+                    break;
+                case 7:
+                    data.setCountOfRepeat( 15 );
+                    break;
+                default:
+                    data.setCountOfRepeat( 10 );
+            }            getComplexExerciseDao().create( data );
         }
    }
 }
