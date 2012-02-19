@@ -177,17 +177,17 @@ public class KachokDatabaseHelper extends OrmLiteSqliteOpenHelper {
 //        final Exercise exercise2 = new Exercise( "Гиперэкстензия", trisepts );
         
         List<Exercise> day1 = new ArrayList<Exercise>( 11 );
-        day2.add( new Exercise( "Подъем туловища", press, counts, kg, - 1 ) );
-        day2.add( new Exercise( "Жим штанги лежа", breasts, counts, kg, 10 ) );
-        day2.add( new Exercise( "Жим гантелей на скамье под углом 30", breasts, counts, kg, 10 ) );
-        day2.add( new Exercise( "Отжимание на брусьях", breasts, counts, kg, -1 ) );
-        day2.add( new Exercise( "Подтягивание к груди широким хватом", back, counts, kg, -1 ) );
-        day2.add( new Exercise( "Тяга штанги в наклоне к груди", back, counts, kg, 10 ) );
-        day2.add( new Exercise( "Тяга на блоке к животу сидя", back, counts, kg, 10 ) );
-        day2.add( new Exercise( "Гиперэкстензия", back, counts, kg, 12 ) );
-        day2.add( new Exercise( "Подьъем штанги стоя ( гриф прямой )", bicepts, counts, kg, 10 ) );
-        day2.add( new Exercise( "Подъем гантелей", bicepts, counts, kg, 10 ) );
-        day2.add( new Exercise( "Подъем гантелей ( с упором )", bicepts, counts, kg, 10 ) );
+        day1.add( new Exercise( "Подъем туловища", press, counts, kg, - 1 ) );
+        day1.add( new Exercise( "Жим штанги лежа", breasts, counts, kg, 10 ) );
+        day1.add( new Exercise( "Жим гантелей на скамье под углом 30", breasts, counts, kg, 10 ) );
+        day1.add( new Exercise( "Отжимание на брусьях", breasts, counts, kg, -1 ) );
+        day1.add( new Exercise( "Подтягивание к груди широким хватом", back, counts, kg, -1 ) );
+        day1.add( new Exercise( "Тяга штанги в наклоне к груди", back, counts, kg, 10 ) );
+        day1.add( new Exercise( "Тяга на блоке к животу сидя", back, counts, kg, 10 ) );
+        day1.add( new Exercise( "Гиперэкстензия", back, counts, kg, 12 ) );
+        day1.add( new Exercise( "Подьъем штанги стоя ( гриф прямой )", bicepts, counts, kg, 10 ) );
+        day1.add( new Exercise( "Подъем гантелей", bicepts, counts, kg, 10 ) );
+        day1.add( new Exercise( "Подъем гантелей ( с упором )", bicepts, counts, kg, 10 ) );
 
         for ( Exercise exercise : day1 ) {
             getExercizeDao().create( exercise );
