@@ -13,6 +13,7 @@ import com.kreig133.kachok.dao.domain.Attempt;
 import com.kreig133.kachok.dao.domain.Complex;
 import com.kreig133.kachok.dao.domain.ComplexExercise;
 import com.kreig133.kachok.dao.domain.Exercise;
+import com.kreig133.kachok.service.AttemptService;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -37,6 +38,8 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
     private List<String> types;
     private List<List<Exercise>> listOfListsOfExercise;
     private ExpandableListView expandableListView;
+    private ViewGroup currentView;
+    private Exercise currentExercise;
 
     private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat( "dd.MM.yyyy" );
 
@@ -51,10 +54,11 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
         expandableListView.setOnChildClickListener( new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick( ExpandableListView parent, View v, int groupPosition, int childPosition, long id ) {
-
+                currentView = (ViewGroup) v;
+                currentExercise = listOfListsOfExercise.get( groupPosition ).get( childPosition );
                 ExerciseActivity.callMe(
                         ComplexActivity.this,
-                        listOfListsOfExercise.get( groupPosition ).get( childPosition ).getId(),
+                        currentExercise.getId(),
                         complex.getId()
                 );
                 return true;
@@ -70,6 +74,23 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
         } catch ( SQLException ex ) {
             throw new RuntimeException( ex );
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if ( currentExercise != null ) {
+            updateSelectedExercise();
+        }
+    }
+
+    private void updateSelectedExercise() {
+        Attempt lastAttempt = AttemptService.getLatestAttemptByExercise( currentExercise, getHelper() );
+        ( ( TextView ) currentView.findViewById( R.id.exercizeDate   ) ).setText( extractLastDate  ( lastAttempt ) );
+        ( ( TextView ) currentView.findViewById( R.id.exercizeWeight ) ).setText( extractLastWeight( lastAttempt ) );
+        ( ( TextView ) currentView.findViewById( R.id.exercizeRepeatCount ) )
+                .setText( extractLastRepeatTime( lastAttempt ) );
+
     }
 
     private void getCurrentComplex() {
@@ -131,10 +152,7 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
         for ( List<Exercise> list : listListsOfExercise ) {
             List<Map<String, String>> listOfMap = new ArrayList<Map<String, String>>();
             for ( Exercise exercise : list ) {
-                final List<Attempt> lastAttempt = getHelper().getAttemptDao().query(
-                        getHelper().getAttemptDao().queryBuilder().orderBy( "date",
-                                false ).limit( 1L ).where().eq( "exercise_id", exercise.getId() ).prepare()
-                );
+                final Attempt lastAttempt = AttemptService.getLatestAttemptByExercise( exercise, getHelper() );
 
                 Map<String, String> map = new HashMap<String, String>();
                 map.put( EXERCISE_NAME, exercise.getName() );
@@ -148,26 +166,26 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
         return result;
     }
 
-    private String extractLastRepeatTime( List<Attempt> lastAttempt ) {
-        if ( lastAttempt == null || lastAttempt.isEmpty() ) {
+    private String extractLastRepeatTime( Attempt lastAttempt ) {
+        if ( lastAttempt == null || lastAttempt.getNumberOfRepeat() == null ) {
             return "--";
         }
-        return lastAttempt.get( 0 ).getNumberOfRepeat().toString();
+        return lastAttempt.getNumberOfRepeat().toString();
     }
 
-    private String extractLastWeight( List<Attempt> lastAttempt ) {
-        if ( lastAttempt == null || lastAttempt.isEmpty() ) {
+    private String extractLastWeight( Attempt lastAttempt ) {
+        if ( lastAttempt == null || lastAttempt.getWeight() == null ) {
             return "--";
         }
 
-        return lastAttempt.get( 0 ).getWeight().toString();
+        return lastAttempt.getWeight().toString();
     }
 
-    private String extractLastDate( List<Attempt> lastAttempt ) {
-        if ( lastAttempt == null || lastAttempt.isEmpty() ) {
+    private String extractLastDate( Attempt lastAttempt ) {
+        if ( lastAttempt == null || lastAttempt.getDate() == null ) {
             return "Ни разу";
         }
-        return simpleDateFormat.format( lastAttempt.get( 0 ).getDate() );
+        return simpleDateFormat.format( lastAttempt.getDate() );
     }
 
     private List<Map<String, String>> getTypeHeaders( List<String> types ) {

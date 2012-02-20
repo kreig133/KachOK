@@ -13,6 +13,7 @@ import com.kreig133.kachok.dao.domain.Attempt;
 import com.kreig133.kachok.dao.domain.ComplexExercise;
 import com.kreig133.kachok.dao.domain.Exercise;
 import com.kreig133.kachok.dao.domain.Sportsman;
+import com.kreig133.kachok.service.AttemptService;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -39,6 +40,7 @@ public class ExerciseActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> 
     private DateFormat dateFormat = new SimpleDateFormat( "dd MMMM yyyy" );
     private DateFormat timeFormat = new SimpleDateFormat( "hh:mm" );
     private ComplexExercise complexExercise;
+    private List<Attempt> attemptList;
 
     @Override
     protected void onCreate( Bundle savedInstanceState ) {
@@ -59,12 +61,16 @@ public class ExerciseActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> 
 
         getCurrentExercise();
 
-        ( ( TextView ) findViewById( R.id.exerciseName ) ).setText( getCurrentTitle() );
-
         try {
             fillList();
         } catch ( SQLException e ) {
             throw new RuntimeException( e );
+        }
+        //Заполняем заголовок
+        ( ( TextView ) findViewById( R.id.exerciseName ) ).setText( getCurrentTitle() );
+        countOfTrying.setText( complexExercise.getCountOfRepeat().toString() );
+        if ( ! attemptList.isEmpty() ) {
+            weightOfTrying.setText( attemptList.get( 0 ).getWeight().toString() );
         }
     }
 
@@ -79,6 +85,9 @@ public class ExerciseActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> 
                 attempt.setWeight( new Double( weightOfTrying.getText().toString() ) );
 
                 getHelper().getAttemptDao().create( attempt );
+
+                attemptList.add( 0, attempt );
+
                 fillList();
             }
         } catch ( SQLException e ) {
@@ -111,8 +120,8 @@ public class ExerciseActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> 
 
         List<String> dates = new ArrayList<String>();
         List<List<Attempt>> listOfListOfAttempt = new ArrayList<List<Attempt>>();
-        
-        
+
+
         for ( int i = 0; i < attemptList.size();  ) {
             String date = dateFormat.format( attemptList.get( i ).getDate() );
             
@@ -173,8 +182,10 @@ public class ExerciseActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> 
     }
 
     private List<Attempt> getAttemptList() throws SQLException {
-        return getHelper().getAttemptDao().query( getHelper().getAttemptDao().queryBuilder().orderBy( "date", false )
-                .limit( 10L ).where().eq( "exercise_id", exercise.getId() ).prepare() );
+        if ( attemptList == null ) {
+            attemptList = AttemptService.getLatestAttemptsByExercise( exercise, 12l, getHelper() );
+        }
+        return attemptList;
     }
 
     private boolean checkIsNumber( EditText weightOfTrying ) {
