@@ -220,7 +220,7 @@ public class KachokDatabaseHelper extends OrmLiteSqliteOpenHelper {
             getExercizeDao().create( exercise );
             final ComplexExercise data = new ComplexExercise( exercise, complex2, day2.indexOf( exercise ) );
 
-            switch ( day1.indexOf( exercise ) ) {
+            switch ( day2.indexOf( exercise ) ) {
                 case 0:
                     data.setCountOfAttempts( 3 );
                     break;
@@ -228,7 +228,7 @@ public class KachokDatabaseHelper extends OrmLiteSqliteOpenHelper {
                     data.setCountOfAttempts( 4 );
             }
 
-            switch ( day1.indexOf( exercise ) ) {
+            switch ( day2.indexOf( exercise ) ) {
                 case 0:
                     data.setCountOfRepeat( -1 );
                     break;
