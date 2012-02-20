@@ -60,11 +60,7 @@ public class ExerciseActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> 
         getCurrentExercise();
 
         ( ( TextView ) findViewById( R.id.exerciseName ) ).setText( getCurrentTitle() );
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
         try {
             fillList();
         } catch ( SQLException e ) {
@@ -84,7 +80,6 @@ public class ExerciseActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> 
 
                 getHelper().getAttemptDao().create( attempt );
                 fillList();
-                tryingList.expandGroup( 0 );
             }
         } catch ( SQLException e ) {
             throw new RuntimeException( e );
@@ -145,6 +140,9 @@ public class ExerciseActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> 
                 new int[]{ R.id.attemptTime, R.id.attemptCountOfRepeat, R.id.attemptWeight}
         ) );
 
+        if ( tryingList.getAdapter().getCount() > 0 ){
+            tryingList.expandGroup( 0 );
+        }
     }
 
     private List<List<Map<String, String>>> getListDate( List<List<Attempt>> listOfListOfAttempt ) {

@@ -64,6 +64,12 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
         getCurrentComplex();
 
         ( (TextView) findViewById( R.id.complexName ) ).setText( complex.getName() );
+
+        try {
+            fillList();
+        } catch ( SQLException ex ) {
+            throw new RuntimeException( ex );
+        }
     }
 
     private void getCurrentComplex() {
@@ -74,17 +80,6 @@ public class ComplexActivity extends OrmLiteBaseActivity<KachokDatabaseHelper> {
             throw new RuntimeException( e );
         }
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        try {
-            fillList();
-        } catch ( SQLException ex ) {
-            throw new RuntimeException( ex );
-        }
-    }
-
 
     private void fillList() throws SQLException{
 
